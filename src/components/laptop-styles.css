@@ -1,0 +1,14 @@
+
+@media (max-width: 1600px) {
+  html {
+    font-size: 90%;
+  }
+
+  .section-headline {
+    font-size: 3em;
+  }
+
+  .animated-header-title {
+    font-size: 3em;
+  }
+}

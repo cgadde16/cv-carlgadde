@@ -1,0 +1,130 @@
+{
+  "pageTitle": "Carl Gadde - CV",
+  "switchToEnglish": "Auf Deutsch wechseln",
+
+  "projectsHeadline": "Projects",
+
+  "projects": {
+  "title": "Projects",
+  "items": [
+    {
+      "id": "project1",
+      "title": "Forensic analysis of encrypted SMB traffic",
+      "description": "In my bachelor's thesis, I am investigating what forensic insights can be gained from encrypted Server Message Block traffic, even if the user data is not accessible. This involves analysing how metadata (packet sizes, timestamps or connection duration) can be used to draw conclusions about content or behaviour. Various methods, including statistical analyses, rule-based heuristics and machine learning, are being examined for their applicability.",
+      "thumbnail": "/images/Fraunhofer_Logo.png"
+    },
+    {
+      "id": "project2",
+      "title": "SMB Command Fingerprinting",
+      "description": "[SMB Command Fingerprinting according to Hilgert et al.](https://dl.acm.org/doi/10.1145/3712716.3712723) is an approach to analysing Server Message Block traffic that uses command and message patterns to draw conclusions about the behaviour of clients and servers. I am involved in its further development and implementation.",
+      "thumbnail": "/images/Fraunhofer_Logo.png"
+    },
+    {
+      "id": "project3",
+      "title": "Automatic collection of malicious software packages",
+      "description": "At university, I developed a framework for expanding the [Backstabber's Knife Collection](https://dl.acm.org/doi/10.1007/978-3-030-52683-2_2). Malicious software packages are automatically collected from various sources, analysed and added to the collection. The framework automates collection processes, executes analysis pipelines and facilitates the continuous expansion of the collection.",
+      "thumbnail": "/images/bonn_logo2.png"
+    },
+    {
+      "id": "project4",
+      "title": "React website",
+      "description": "My personal CV website was implemented using React. The source code is available on my [GitHub](https://github.com/cgadde16).",
+      "thumbnail": "/images/reactlogo2.png"
+    },
+    {
+      "id": "project5",
+      "title": "Design and manufacture of aero components",
+      "description": "For the G24e racing car of BRS Motor Sport e.V., I designed the rear wing in Siemens NX and assisted in the manufacture of several aerodynamic components.",
+      "thumbnail": "/images/brs2.png"
+    }
+  ]
+},
+
+  "timeline": {
+    "noEvents": "No events available.",
+    "events": {
+      "event1": {
+        "title": "Cyber Security (B.Sc.)",
+        "subtitle": "Rheinische Friedrich-Wilhelms-University Bonn",
+        "sidebarTitle": "Studies",
+        "content": "I am studying Cyber Security at the University of Bonn and am currently in my seventh semester. I am currently writing my bachelor's thesis on the analysis of encrypted SMB traffic and expect to complete my studies in March 2026. During my studies, I have focused intensively on IT security, cryptography and digital forensics.",
+        "date": "10/2022 - present"
+      },
+      "event2": {
+        "title": "Cyber Analysis and Defense",
+        "subtitle": "Fraunhofer FKIE",
+        "sidebarTitle": "Work",
+        "content": "I am currently working as a student assistant at the _Fraunhofer Institute for Communication, Information Processing and Ergonomics_ (FKIE) in the _Cyber Analysis and Defence_  department. There, I am involved in the further development of [SMB Command Fingerprinting according to Hilgert et al.](https://dl.acm.org/doi/10.1145/3712716.3712723) and am gaining practical experience in cybersecurity research and network forensics.",
+        "date": "07/2025 - heute"
+      },
+      "event3": {
+        "title": "Mobile Incident Response Team",
+        "subtitle": "Federal Office for Information Security",
+        "sidebarTitle": "Internship",
+        "content": "During my six-week internship at the _Federal Office for Information Security_ in the _Mobile Incident Response Team_, I gained insights into operational cybersecurity, particularly in how to deal with security incidents, and was able to contribute to a system for managing evidence.",
+        "date": "09/2025 - 10/2025"
+      },
+      "event4": {
+        "title": "General higher education entrance qualification",
+        "subtitle": "Hans-Thoma-Gymnasium Lörrach",
+        "sidebarTitle": "School",
+        "content": "I obtained my general higher education entrance qualification at Hans-Thoma-Gymnasium with a grade of 1.3 and the major subjects mathematics, computer science and physics. During my school years, I was active at the _phaenovum_ student research centre and took part in several competitions, including _ICYS Malaysia_, _GYPT_ and _Jugend forscht_.",
+        "date": "09/2013 - 07/2021"
+      }
+    }
+  },
+  "footer": {
+    "copyrightText": "Carl Gadde"
+  },
+  "skills": {
+    "softwareHeadline": "Skills",
+    "languageHeadline": "Language skills",
+    "hobbiesHeadline": "Hobbies & Interests",
+     "softwareSkills": {
+      
+      "Digital forensics": [
+        { "name": "The Sleuth Kit", "icon": "FaMagnifyingGlass" },
+        { "name": "Wireshark", "icon": "SiWireshark" },
+        { "name": "Zeek", "icon": "PiNetwork" }
+      ],
+      "Programming languages": [
+        { "name": "Python", "icon": "FaPython" },
+        { "name": "C", "icon": "IoHardwareChipOutline" },
+        { "name": "C++", "icon": "IoHardwareChipOutline" }
+      ],
+      "Productivity": [
+        { "name": "Git", "icon": "FaGithub" },
+        { "name": "LaTeX", "icon": "CiTextAlignCenter" },
+        { "name": "Microsoft Office", "icon": "TiVendorMicrosoft" }
+      ],
+      "Other": [
+        { "name": "Siemens NX", "icon": "RiBox3Fill" },
+        { "name": "React", "icon": "FaReact" }
+      ]
+    },
+    "languageSkills": [
+      { "language": "German", "level": "C2", "proficiency": 100 },
+      { "language": "English", "level": "C1", "proficiency": 83.4 },
+      { "language": "French", "level": "B1", "proficiency": 49.8 },
+      { "language": "Italian", "level": "A1", "proficiency": 16.6 }
+    ],
+    "hobbiesList": [
+      { "name": "Triathlon", "icon": "IoBicycle" },
+      { "name": "Skiing", "icon": "FaSkiing" },
+      { "name": "Video & Photography", "icon": "FaCamera" },
+      { "name": "Motorsports", "icon": "GiFullMotorcycleHelmet" }
+    ],
+    "noSoftwareSkills": "No specific software skills listed.",
+    "noLanguageSkills": "No specific language skills listed.",
+    "noHobbies": "No specific hobbies listed." 
+  },
+
+  "person": {
+    "name": "Carl Gadde",
+    "aboutMeTitle": "About me",
+    "titleOrProfession": "Cyber Security Student",
+    "location": "Bonn, Germany",
+    "email": "carlgadde@proton.me",
+    "bioShort": "Hi, I'm Carl. I study Cyber Security at the University of Bonn and am particularly interested in digital forensics and incident response. Alongside my studies, I work as a student assistant at Fraunhofer FKIE and recently completed an internship with the Mobile Incident Response Team at the Federal Office for Information Security. I am currently writing my bachelor's thesis on the analysis of encrypted SMB traffic. In my free time, I enjoy jogging and skiing."
+  }
+}

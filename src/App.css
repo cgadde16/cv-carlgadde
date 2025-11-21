@@ -1,0 +1,8 @@
+.scroll-locked {
+  overflow: hidden !important;
+  padding-right: var(--scrollbar-width) !important;
+}
+
+.scroll-locked html {
+  overflow: hidden !important;
+}
