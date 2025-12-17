@@ -16,7 +16,7 @@
     {
       "id": "project2",
       "title": "SMB Command Fingerprinting",
-      "description": "[SMB Command Fingerprinting nach Hilgert et al.](https://dl.acm.org/doi/10.1145/3712716.3712723) ist ein Ansatz zur Analyse von Server Message Block-Netzwerkverkehr, bei dem anhand von Kommando- und Nachrichtenmustern Rückschlüsse auf das Verhalten von Clients und Servern gezogen werden können. Ich bin an der Weiterentwicklung und Implementierung beteiligt.",
+      "description": "[SMB Command Fingerprinting nach Hilgert et al.](https://dl.acm.org/doi/10.1145/3712716.3712723) ist ein Ansatz zur Analyse von Server Message Block-Netzwerkverkehr, bei dem anhand von Kommando- und Nachrichtenmustern Rückschlüsse auf das Verhalten von Clients und Servern gezogen werden können. Ich bin an der Weiterentwicklung und Implementierung ([GitHub](https://github.com/fkie-cad/SCF)) beteiligt.",
       "thumbnail": "/images/Fraunhofer_Logo.png"
     },
     {
