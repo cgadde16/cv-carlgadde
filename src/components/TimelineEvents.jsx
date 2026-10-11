@@ -5,7 +5,6 @@ import ReactMarkdown from 'react-markdown';
 
 const SLOT_ITEM_HEIGHT = 100;
 const WHEEL_GESTURE_GAP = 150;
-const WHEEL_STEP_COOLDOWN = 600;
 const FIXED_LOGO_WIDTH_DESKTOP = 250;
 
 // Mouse wheels scroll in fixed notches (wheelDelta of 120 per notch, or line mode in Firefox).
@@ -34,7 +33,9 @@ function TimelineEvents({ startAnimation }) {
   const contentWrapperRef = useRef(null);
   const sidebarRef = useRef(null);
   const testElementRef = useRef(null);
-  const wheelGestureRef = useRef({ lastEventTime: 0, lastAbsDelta: 0, lastStepTime: 0, stepped: false });
+  const wheelGestureRef = useRef({
+    lastEventTime: 0, lastAbsDelta: 0, lastSign: 0, stepped: false, sawDecay: false, trough: Infinity, rising: 0,
+  });
   const logoContainerRef = useRef(null);
   const textContentRef = useRef(null);
 
@@ -221,18 +222,37 @@ function TimelineEvents({ startAnimation }) {
       return;
     }
 
-    // Trackpads (e.g. on macOS) send a long stream of small wheel events per swipe, including
-    // momentum. Each stream counts as one gesture that moves the timeline by at most one entry.
-    // A new gesture starts after a short pause, or with a clear new push during the momentum tail.
+    // Trackpads (e.g. on macOS) send a long stream of small wheel events per swipe, including a
+    // momentum tail that can last over a second. Each swipe moves the timeline by one entry.
+    // A new swipe is recognised by a pause, a change of direction, or deltas rising again after
+    // they had been decaying (momentum only ever slows down; a new swipe builds up).
     const gesture = wheelGestureRef.current;
     const now = Date.now();
     const absDelta = Math.abs(event.deltaY);
+    const sign = Math.sign(event.deltaY);
+
+    if (absDelta < gesture.lastAbsDelta) {
+      gesture.sawDecay = true;
+      gesture.rising = 0;
+      gesture.trough = Math.min(gesture.trough, absDelta);
+    } else if (absDelta > gesture.lastAbsDelta) {
+      gesture.rising += 1;
+    }
+
     const isNewGesture =
       now - gesture.lastEventTime > WHEEL_GESTURE_GAP ||
-      (absDelta >= 20 && absDelta > 2 * gesture.lastAbsDelta && now - gesture.lastStepTime > WHEEL_STEP_COOLDOWN);
+      sign !== gesture.lastSign ||
+      (gesture.sawDecay && gesture.rising >= 2 && absDelta >= Math.max(2 * gesture.trough, gesture.trough + 4));
+
     gesture.lastEventTime = now;
     gesture.lastAbsDelta = absDelta;
-    if (isNewGesture) gesture.stepped = false;
+    gesture.lastSign = sign;
+    if (isNewGesture) {
+      gesture.stepped = false;
+      gesture.sawDecay = false;
+      gesture.trough = Infinity;
+      gesture.rising = 0;
+    }
 
     // Past the first/last entry a fresh gesture scrolls the page, but the rest of the
     // gesture that just reached that entry is swallowed so the page doesn't jump away.
@@ -242,7 +262,6 @@ function TimelineEvents({ startAnimation }) {
     if (beyondEdge || gesture.stepped) return;
 
     gesture.stepped = true;
-    gesture.lastStepTime = now;
     setCurrentEventIndex(targetIndex);
   }, [currentEventIndex, initialEvents.length, isMobile]);
 
