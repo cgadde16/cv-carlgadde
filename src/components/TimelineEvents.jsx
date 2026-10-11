@@ -4,8 +4,19 @@ import { useTranslation } from 'react-i18next';
 import ReactMarkdown from 'react-markdown';
 
 const SLOT_ITEM_HEIGHT = 100;
-const SCROLL_RELEASE_COOLDOWN = 300;
+const WHEEL_GESTURE_GAP = 150;
+const WHEEL_STEP_COOLDOWN = 600;
 const FIXED_LOGO_WIDTH_DESKTOP = 250;
+
+// Mouse wheels scroll in fixed notches (wheelDelta of 120 per notch, or line mode in Firefox).
+// Trackpads report pixel deltas where wheelDeltaY is -3 × deltaY (Chrome, Edge, Safari).
+const isMouseWheelEvent = (event) => {
+  if (event.deltaMode !== 0) return true;
+  if (typeof event.wheelDeltaY === 'number' && event.wheelDeltaY !== 0) {
+    return Math.abs(Math.abs(event.wheelDeltaY) - 3 * Math.abs(event.deltaY)) > 2;
+  }
+  return false;
+};
 
 function TimelineEvents({ startAnimation }) {
   const { t } = useTranslation();
@@ -23,8 +34,7 @@ function TimelineEvents({ startAnimation }) {
   const contentWrapperRef = useRef(null);
   const sidebarRef = useRef(null);
   const testElementRef = useRef(null);
-  const lastBlockedScrollTimeRef = useRef(0);
-  const atTimelineEdgeRef = useRef(false);
+  const wheelGestureRef = useRef({ lastEventTime: 0, lastAbsDelta: 0, lastStepTime: 0, stepped: false });
   const logoContainerRef = useRef(null);
   const textContentRef = useRef(null);
 
@@ -157,7 +167,6 @@ function TimelineEvents({ startAnimation }) {
   const handleSidebarClick = useCallback((targetIndex) => {
     if (targetIndex >= 0 && targetIndex < initialEvents.length) {
       setCurrentEventIndex(targetIndex);
-      atTimelineEdgeRef.current = (targetIndex === 0 || targetIndex === initialEvents.length - 1);
     }
   }, [initialEvents.length]);
 
@@ -199,40 +208,42 @@ function TimelineEvents({ startAnimation }) {
     const box = contentWrapperRef.current?.getBoundingClientRect();
     if (box && (event.clientY < box.top || event.clientY > box.bottom)) return;
 
-    const scrollDeltaY = event.deltaY;
-    let blockPageScroll = true;
-    const isScrollingUp = scrollDeltaY < 0;
-    const isScrollingDown = scrollDeltaY > 0;
-    const atTopEdge = currentEventIndex === 0;
-    const atBottomEdge = currentEventIndex === initialEvents.length - 1;
-    let newIndex = currentEventIndex;
-    
-    if (isScrollingDown) {
-      newIndex = Math.min(currentEventIndex + 1, initialEvents.length - 1);
-    } else if (isScrollingUp) {
-      newIndex = Math.max(currentEventIndex - 1, 0);
-    }
-    
-    if (atTimelineEdgeRef.current && ((isScrollingUp && atTopEdge) || (isScrollingDown && atBottomEdge)) && (Date.now() - lastBlockedScrollTimeRef.current < SCROLL_RELEASE_COOLDOWN)) {
-      blockPageScroll = true;
-    } else if ((isScrollingUp && atTopEdge && newIndex === currentEventIndex) || (isScrollingDown && atBottomEdge && newIndex === currentEventIndex)) {
-      blockPageScroll = false;
-      lastBlockedScrollTimeRef.current = Date.now();
-    } else {
-      blockPageScroll = true;
-    }
-    
-    if (blockPageScroll) {
+    if (event.deltaY === 0) return;
+
+    const targetIndex = currentEventIndex + (event.deltaY > 0 ? 1 : -1);
+    const beyondEdge = targetIndex < 0 || targetIndex >= initialEvents.length;
+
+    // Mouse wheel: every notch moves one entry; past the first/last entry the page scrolls.
+    if (isMouseWheelEvent(event)) {
+      if (beyondEdge) return;
       event.preventDefault();
-      if (newIndex !== currentEventIndex) {
-        setCurrentEventIndex(newIndex);
-        atTimelineEdgeRef.current = (newIndex === 0 || newIndex === initialEvents.length - 1);
-      } else {
-        atTimelineEdgeRef.current = atTopEdge || atBottomEdge;
-      }
-    } else {
-      atTimelineEdgeRef.current = false;
+      setCurrentEventIndex(targetIndex);
+      return;
     }
+
+    // Trackpads (e.g. on macOS) send a long stream of small wheel events per swipe, including
+    // momentum. Each stream counts as one gesture that moves the timeline by at most one entry.
+    // A new gesture starts after a short pause, or with a clear new push during the momentum tail.
+    const gesture = wheelGestureRef.current;
+    const now = Date.now();
+    const absDelta = Math.abs(event.deltaY);
+    const isNewGesture =
+      now - gesture.lastEventTime > WHEEL_GESTURE_GAP ||
+      (absDelta >= 20 && absDelta > 2 * gesture.lastAbsDelta && now - gesture.lastStepTime > WHEEL_STEP_COOLDOWN);
+    gesture.lastEventTime = now;
+    gesture.lastAbsDelta = absDelta;
+    if (isNewGesture) gesture.stepped = false;
+
+    // Past the first/last entry a fresh gesture scrolls the page, but the rest of the
+    // gesture that just reached that entry is swallowed so the page doesn't jump away.
+    if (beyondEdge && !gesture.stepped) return;
+
+    event.preventDefault();
+    if (beyondEdge || gesture.stepped) return;
+
+    gesture.stepped = true;
+    gesture.lastStepTime = now;
+    setCurrentEventIndex(targetIndex);
   }, [currentEventIndex, initialEvents.length, isMobile]);
 
   useEffect(() => {
@@ -246,11 +257,7 @@ function TimelineEvents({ startAnimation }) {
         mainContainer.addEventListener('wheel', handleWheel, { passive: false });
       }
     }
-    
-    if (initialEvents.length > 0) {
-        atTimelineEdgeRef.current = (currentEventIndex === 0 || currentEventIndex === initialEvents.length - 1);
-    }
-    
+
     return () => {
       if (mainContainer) {
         if (isMobile) {
