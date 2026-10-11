@@ -16,12 +16,6 @@
   align-items: center;
 }
 
-.intro-overlay.fade-out {
-  opacity: 0;
-  pointer-events: none;
-}
-
-
 .intro-top-section {
   height: 50vh;
   width: 100%;

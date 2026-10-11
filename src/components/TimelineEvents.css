@@ -144,6 +144,29 @@ a {
   min-height: 700px;
 }
 
+/* Desktop: let the title list extend past the timeline box instead of clipping it.
+   Only the titles themselves catch clicks, so the overflow area stays click-through. */
+.timeline-container.desktop,
+.timeline-container.desktop .titles-list-wrapper {
+  overflow: visible;
+}
+
+.timeline-container.desktop .slot-list {
+  pointer-events: none;
+}
+
+.timeline-container.desktop .slot-item {
+  pointer-events: auto;
+}
+
+/* On narrower desktops, titles above the box would run into the "About me" text,
+   so there they may only overflow downwards. */
+@media (max-width: 1879px) {
+  .timeline-container.desktop .titles-list-wrapper {
+    clip-path: inset(0 -100vw -100vh -100vw);
+  }
+}
+
 .slot-item {
   height: var(--slot-item-height);
   display: flex;
@@ -177,6 +200,7 @@ a {
   justify-content: center;
   align-items: center;
   padding: 1rem;
+  box-sizing: border-box;
 }
 
 .mobile-tabs-wrapper {
@@ -219,8 +243,6 @@ a {
   box-shadow: 0 8px 25px rgba(74, 144, 226, 0.3);
 }
 
-.tab-number { display: none; }
-
 .tab-title {
   font-size: 0.9em; 
   font-weight: 600;
@@ -236,15 +258,6 @@ a {
 }
 
 .mobile-tab:not(.active) .tab-title { color: #666; }
-
-.swipe-hint {
-  margin-top: 1rem;
-  opacity: 0.6;
-  font-size: 0.85em;
-  color: #666;
-  text-align: center;
-  font-style: italic;
-}
 
 
 
@@ -368,14 +381,23 @@ a {
     height: 120px;
   }
 
+  .timeline-container.mobile .mobile-tabs-container {
+    padding: 0.5rem;
+  }
+
+  .timeline-container.mobile .mobile-tabs-wrapper {
+    gap: 0.3rem;
+  }
+
   .timeline-container.mobile .mobile-tab {
-    min-width: 70px;
-    max-width: 100px;
-    padding: 0.8rem 0.4rem;
+    flex: 1 1 0;
+    min-width: 0;
+    max-width: none;
+    padding: 0.8rem 0.2rem;
   }
 
   .timeline-container.mobile .tab-title {
-    font-size: 0.8em; 
+    font-size: clamp(0.65rem, 3.1vw, 0.8rem);
   }
 
   .timeline-container.mobile .titles-sidebar {

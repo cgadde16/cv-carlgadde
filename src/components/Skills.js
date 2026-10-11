@@ -1,41 +1,36 @@
-import React, { useState, useRef } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import './Skills.css';
 
-import {
-  FaReact, FaNodeJs, FaHtml5, FaCss3Alt, FaGithub, FaFigma,
-  FaCamera, FaHiking, FaUtensils, FaGamepad, FaBookOpen, FaQuestionCircle 
-} from 'react-icons/fa';
-import { IoLogoJavascript } from 'react-icons/io5';
-import { SiLibreofficedraw } from "react-icons/si";
+import { FaReact, FaGithub, FaCamera, FaSkiing, FaPython, FaQuestionCircle } from 'react-icons/fa';
+import { FaMagnifyingGlass } from "react-icons/fa6";
+import { IoBicycle, IoHardwareChipOutline } from 'react-icons/io5';
+import { SiWireshark } from "react-icons/si";
 import { CiTextAlignCenter } from "react-icons/ci";
 import { RiBox3Fill } from "react-icons/ri";
-import { IoMdFingerPrint } from "react-icons/io";
 import { GiFullMotorcycleHelmet } from "react-icons/gi";
-import { FaSkiing } from "react-icons/fa";
-import { IoBicycle } from "react-icons/io5";
-import { SiWireshark } from "react-icons/si";
-import { FaPython } from "react-icons/fa";
 import { PiNetwork } from "react-icons/pi";
-import { FaMagnifyingGlass } from "react-icons/fa6";
 import { TiVendorMicrosoft } from "react-icons/ti";
-import { IoHardwareChipOutline } from "react-icons/io5";
-
-
 
 import LanguageSkills from './LanguageSkills';
 
-
+// Icon names referenced from the "icon" fields in public/locales/*/translation.json.
+// To use a new icon there, import it here and add it to this map.
 const iconMap = {
-  FaReact: <FaReact />, IoLogoJavascript: <IoLogoJavascript />, FaNodeJs: <FaNodeJs />,
-  FaHtml5: <FaHtml5 />, FaCss3Alt: <FaCss3Alt />, FaGithub: <FaGithub />,
-  FaFigma: <FaFigma />, SiLibreofficedraw: <SiLibreofficedraw />, CiTextAlignCenter: <CiTextAlignCenter />,
-  RiBox3Fill: <RiBox3Fill />, IoMdFingerPrint: <IoMdFingerPrint />,
-  FaCamera: <FaCamera />, FaHiking: <FaHiking />, FaUtensils: <FaUtensils />,
-  FaGamepad: <FaGamepad />, FaBookOpen: <FaBookOpen />, GiFullMotorcycleHelmet : <GiFullMotorcycleHelmet />, FaSkiing : <FaSkiing />, IoBicycle: <IoBicycle />, SiWireshark: <SiWireshark />, FaPython: <FaPython />, PiNetwork: <PiNetwork />, FaMagnifyingGlass:
-<FaMagnifyingGlass />, TiVendorMicrosoft: <TiVendorMicrosoft />, IoHardwareChipOutline: <IoHardwareChipOutline />
-
-
+  FaReact: <FaReact />,
+  FaGithub: <FaGithub />,
+  FaCamera: <FaCamera />,
+  FaSkiing: <FaSkiing />,
+  FaPython: <FaPython />,
+  FaMagnifyingGlass: <FaMagnifyingGlass />,
+  IoBicycle: <IoBicycle />,
+  IoHardwareChipOutline: <IoHardwareChipOutline />,
+  SiWireshark: <SiWireshark />,
+  CiTextAlignCenter: <CiTextAlignCenter />,
+  RiBox3Fill: <RiBox3Fill />,
+  GiFullMotorcycleHelmet: <GiFullMotorcycleHelmet />,
+  PiNetwork: <PiNetwork />,
+  TiVendorMicrosoft: <TiVendorMicrosoft />,
 };
 
 const getIcon = (iconName) => iconMap[iconName] || <FaQuestionCircle />;
@@ -43,12 +38,14 @@ const getIcon = (iconName) => iconMap[iconName] || <FaQuestionCircle />;
 function Skills() {
   const { t } = useTranslation();
 
-  const softwareSkillsObject = t('skills.softwareSkills', { returnObjects: true, defaultValue: {} });
+  // Software skills temporarily hidden, see the commented-out block below.
+  // const softwareSkillsObject = t('skills.softwareSkills', { returnObjects: true, defaultValue: {} });
   const hobbiesList = t('skills.hobbiesList', { returnObjects: true, defaultValue: [] });
 
   return (
     <section id="skills" className="skills-section">
        <LanguageSkills />
+      {/*
       <div className="skills-main-container">
        
         <div className="skills-header">
@@ -82,6 +79,7 @@ function Skills() {
           </div>
         </div>
       </div>
+      */}
 
       <div className="hobbies-container">
         <div className="hobbies-section">

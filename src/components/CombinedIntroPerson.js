@@ -5,23 +5,21 @@ import './Person.css';
 import './IntroAnimation.css';
 import { CiMail, CiLocationOn } from "react-icons/ci";
 import LanguageSwitcherIcon from './LanguageSwitcherIcon';
+import { externalLinkComponents } from './markdownComponents';
 
 function CombinedIntroPerson({ onAnimationComplete }) {
   const { t, i18n } = useTranslation();
 
   const name = t('person.name');
-  const fullTitle = t('person.titleOrProfession');
   const location = t('person.location');
   const email = t('person.email');
-  const bioShort = t('person.bioShort', { returnObjects: true }); 
+  const bioShort = t('person.bioShort', { returnObjects: true });
 
-  const [phase, setPhase] = useState('intro'); 
-  const [nameAlwaysVisible, setNameAlwaysVisible] = useState(false);
-  
+  const [phase, setPhase] = useState('intro');
+
   const [showHeader, setShowHeader] = useState(false);
   const [animatedSubtitle, setAnimatedSubtitle] = useState('');
-  const [isTextAnimating, setIsTextAnimating] = useState(true);
-  
+
   const [animatedTitle, setAnimatedTitle] = useState('');
   const [backgroundIsVisible, setBackgroundIsVisible] = useState(false);
   const [contentIsVisible, setContentIsVisible] = useState(false);
@@ -41,8 +39,7 @@ function CombinedIntroPerson({ onAnimationComplete }) {
     document.body.style.height = '100%';
     
     setShowHeader(true);
-    setNameAlwaysVisible(true);
-    
+
     setTimeout(() => {
       setNameIsVisible(true);
     }, 1500);
@@ -70,7 +67,6 @@ function CombinedIntroPerson({ onAnimationComplete }) {
         textTimeout = setTimeout(() => {
           deleteText((loadingText.length + 3), () => {
             setAnimatedSubtitle('');
-            setIsTextAnimating(false);
             textTimeout = setTimeout(() => {
               setPhase('person');
               document.body.style.overflow = originalStyle;
@@ -108,6 +104,8 @@ function CombinedIntroPerson({ onAnimationComplete }) {
       document.body.style.width = '';
       document.body.style.height = '';
     };
+    // Intro should play exactly once on mount, not again on re-renders or language changes.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const startTitleAnimation = () => {
@@ -199,13 +197,7 @@ function CombinedIntroPerson({ onAnimationComplete }) {
           </div>
           <div className="main-content">
             <div className="person-bio">
-              <ReactMarkdown
-                components={{
-                  a: ({ node, ...props }) => (
-                    <a {...props} target="_blank" rel="noopener noreferrer" />
-                  )
-                }}
-              >
+              <ReactMarkdown components={externalLinkComponents}>
                 {bioShort}
               </ReactMarkdown>
             </div>

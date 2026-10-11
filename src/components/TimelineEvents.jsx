@@ -3,41 +3,22 @@ import './TimelineEvents.css';
 import { useTranslation } from 'react-i18next';
 import ReactMarkdown from 'react-markdown';
 
-const eventLogos = [
-  "/images/uni.jpg",
-  "/images/fkie.png",
-  "/images/bsi.jpg",
-  "/images/htg.jpg"
-];
-
 const SLOT_ITEM_HEIGHT = 100;
 const SCROLL_RELEASE_COOLDOWN = 300;
-const FIXED_LOGO_WIDTH_DESKTOP = 250; 
-const MIN_MOBILE_TAB_FONT_SIZE = 0.7; 
+const FIXED_LOGO_WIDTH_DESKTOP = 250;
 
 function TimelineEvents({ startAnimation }) {
   const { t } = useTranslation();
 
-  const initialEvents = useMemo(() => (
-    Array.from({ length: 4 }, (_, i) => {
-      const id = i + 1;
-      return {
-        id,
-        title: t(`timeline.events.event${id}.title`),
-        subtitle: t(`timeline.events.event${id}.subtitle`),
-        sidebarTitle: t(`timeline.events.event${id}.sidebarTitle`) || t(`timeline.events.event${id}.title`),
-        content: t(`timeline.events.event${id}.content`),
-        date: t(`timeline.events.event${id}.date`),
-        logoUrl: eventLogos[i],
-      };
-    })
-  ), [t]);
+  const initialEvents = useMemo(() => {
+    const events = t('timeline.events', { returnObjects: true });
+    return Array.isArray(events) ? events : [];
+  }, [t]);
 
   const [currentEventIndex, setCurrentEventIndex] = useState(0);
   const [calculatedFontSize, setCalculatedFontSize] = useState('2.5em');
   const [sidebarReady, setSidebarReady] = useState(false);
-  const [isMobile, setIsMobile] = useState(false); 
-  const [mobileTabFontSize, setMobileTabFontSize] = useState('0.9em');
+  const [isMobile, setIsMobile] = useState(false);
 
   const contentWrapperRef = useRef(null);
   const sidebarRef = useRef(null);
@@ -46,7 +27,6 @@ function TimelineEvents({ startAnimation }) {
   const atTimelineEdgeRef = useRef(false);
   const logoContainerRef = useRef(null);
   const textContentRef = useRef(null);
-  const mobileTabsWrapperRef = useRef(null);
 
   useEffect(() => {
     const checkScreenSize = () => {
@@ -75,49 +55,6 @@ function TimelineEvents({ startAnimation }) {
       }
     };
   }, [currentEventIndex, isMobile]); 
-
-  const adjustMobileTabFontSize = useCallback(() => {
-    if (!isMobile || !mobileTabsWrapperRef.current || !initialEvents.length) {
-      return;
-    }
-
-    const wrapper = mobileTabsWrapperRef.current;
-    const tabs = Array.from(wrapper.children);
-    const containerWidth = wrapper.offsetWidth;
-    const defaultFontSize = 0.9;
-
-    tabs.forEach(tab => {
-        const title = tab.querySelector('.tab-title');
-        if (title) title.style.fontSize = `${defaultFontSize}em`;
-    });
-    
-    setTimeout(() => {
-      const totalTabsWidth = tabs.reduce((sum, tab) => sum + tab.offsetWidth, 0);
-      const gapWidth = (tabs.length - 1) * 8;
-      const requiredWidth = totalTabsWidth + gapWidth;
-
-      if (requiredWidth > containerWidth) {
-        const shrinkRatio = containerWidth / requiredWidth;
-        const newSize = defaultFontSize * shrinkRatio;
-        const finalSize = Math.max(newSize, MIN_MOBILE_TAB_FONT_SIZE);
-        setMobileTabFontSize(`${finalSize.toFixed(2)}em`);
-      } else {
-        setMobileTabFontSize(`${defaultFontSize}em`);
-      }
-
-      tabs.forEach(tab => {
-          const title = tab.querySelector('.tab-title');
-          if (title) title.style.fontSize = '';
-      });
-    }, 50);
-
-  }, [isMobile, initialEvents]);
-
-  useEffect(() => {
-    adjustMobileTabFontSize(); 
-    window.addEventListener('resize', adjustMobileTabFontSize);
-    return () => window.removeEventListener('resize', adjustMobileTabFontSize);
-  }, [adjustMobileTabFontSize]);
 
 
   const calculateOptimalFontSize = useCallback(() => {
@@ -257,7 +194,11 @@ function TimelineEvents({ startAnimation }) {
 
   const handleWheel = useCallback((event) => {
     if (isMobile || initialEvents.length === 0) return;
-    
+
+    // Titles may overflow the timeline box on desktop; only hijack the wheel inside the box.
+    const box = contentWrapperRef.current?.getBoundingClientRect();
+    if (box && (event.clientY < box.top || event.clientY > box.bottom)) return;
+
     const scrollDeltaY = event.deltaY;
     let blockPageScroll = true;
     const isScrollingUp = scrollDeltaY < 0;
@@ -344,11 +285,13 @@ function TimelineEvents({ startAnimation }) {
         {currentEventData && (
           <div className="event-card active-event-card">
             <div ref={logoContainerRef} className="event-logo-container">
-              <img  
-                src={process.env.PUBLIC_URL + currentEventData.logoUrl} 
-                alt={`${currentEventData.title} logo`} 
-                className="event-logo"
-              />
+              {currentEventData.logo && (
+                <img
+                  src={process.env.PUBLIC_URL + currentEventData.logo}
+                  alt={`${currentEventData.title} logo`}
+                  className="event-logo"
+                />
+              )}
             </div>
             <div ref={textContentRef} className="event-text-content">
               <h2>{currentEventData.title}</h2>
@@ -367,18 +310,14 @@ function TimelineEvents({ startAnimation }) {
       >
         {isMobile ? (
           <div className="mobile-tabs-container">
-            <div className="mobile-tabs-wrapper" ref={mobileTabsWrapperRef}>
+            <div className="mobile-tabs-wrapper">
               {initialEvents.map((event, index) => (
                 <div
                   key={event.id}
                   className={`mobile-tab ${index === currentEventIndex ? 'active' : ''}`}
                   onClick={() => handleSidebarClick(index)}
                 >
-                  <div className="tab-number">{index + 1}</div>
-                  <div 
-                    className="tab-title"
-                    style={{ fontSize: mobileTabFontSize }}
-                  >
+                  <div className="tab-title">
                     {event.sidebarTitle || event.title}
                   </div>
                 </div>
